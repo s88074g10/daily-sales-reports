@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>華克電腦 業績日報</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 1px solid #334155;
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+  header h1 { font-size: 1.5rem; font-weight: 700; }
+  header p { color: #94a3b8; margin-top: 0.5rem; font-size: 0.9rem; }
+  .container { max-width: 600px; margin: 0 auto; padding: 1.5rem; }
+  .report-list { list-style: none; }
+  .report-list li {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
+  }
+  .report-list li:hover { border-color: #f59e0b; }
+  .report-list li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    color: #e2e8f0;
+    text-decoration: none;
+  }
+  .report-list li a .date { font-weight: 600; font-size: 1.05rem; }
+  .report-list li a .arrow { color: #f59e0b; font-size: 1.2rem; }
+  .empty { text-align: center; color: #64748b; padding: 3rem 1rem; }
+  .loading { text-align: center; color: #94a3b8; padding: 2rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📈 華克電腦 業績日報</h1>
+  <p>Daily Sales Reports</p>
+</header>
+<div class="container">
+  <div class="loading" id="loading">載入中...</div>
+  <ul class="report-list" id="report-list" style="display:none;"></ul>
+  <div class="empty" id="empty" style="display:none;">尚無報告</div>
+</div>
+<script>
+  fetch('reports.json')
+    .then(r => r.json())
+    .then(dates => {
+      document.getElementById('loading').style.display = 'none';
+      if (!dates.length) {
+        document.getElementById('empty').style.display = 'block';
+        return;
+      }
+      const list = document.getElementById('report-list');
+      list.style.display = 'block';
+      dates.sort((a, b) => b.localeCompare(a));
+      dates.forEach(date => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="reports/${date}.html"><span class="date">${date}</span><span class="arrow">→</span></a>`;
+        list.appendChild(li);
+      });
+    })
+    .catch(() => {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('empty').style.display = 'block';
+    });
+</script>
+</body>
+</html>
